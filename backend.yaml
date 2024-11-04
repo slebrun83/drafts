@@ -1,101 +1,78 @@
 openapi: 3.0.0
 info:
-  title: User Prompt Backends API
-  description: >-
-    This API allows you to send a user prompt in the request body and backend ID
-    in the request header. JWT authentication is required to access this API.
+  title: Prompt Processing API
   version: v1
   contact:
     name: John Doe
-    url: https://github.com/apigee/devrel
+    url: https://example.com
+    
 paths:
-  /api/v1/userPrompts:
+  /prompt:
     post:
-      description: >-
-        The request body should contain the user prompt in plain text. The
+      summary: Process a user prompt
+      description: The request body should contain the user prompt in plain text. The
         request header should contain the backend ID and JWT authentication
         token.
-      operationId: createUserPrompt
+      security:
+        - bearerAuth: []
       requestBody:
-        content:
-          application/json:
-            schema:
-              $ref: '#/components/schemas/UserPrompt'
         required: true
+        content:
+          text/plain:
+            schema:
+              type: string
+              description: The user prompt.
+      parameters:
+        - in: header
+          name: Backend-ID
+          schema:
+            type: string
+          required: true
+          description: The ID of the backend system.
       responses:
         '200':
-          description: OK
-        '400':
+          description: Prompt received and processed successfully.
           content:
             application/json:
               schema:
-                $ref: '#/components/schemas/notfound'
-          description: Bad Request
-        '401':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notfound'
-          description: Unauthorized
-        '403':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notfound'
-          description: Forbidden
-        '404':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notfound'
-          description: Not Found
-        '500':
-          content:
-            application/json:
-              schema:
-                $ref: '#/components/schemas/notfound'
-          description: Internal Server Error
-      summary: Creates a new user prompt.
-      tags:
-        - user-prompts
-components:
-  schemas:
-    JWT:
-      description: JWT authentication token
-      properties:
-        token:
-          description: The JWT authentication token
-          type: string
-      type: object
-    UserPrompt:
-      description: The user prompt in plain text.
-      properties:
-        prompt:
-          description: The user prompt in plain text.
-          type: string
-      type: object
-    notfound:
-      properties:
-        errror:
-          description: rank number in list
-          properties:
-            code:
-              example: 404
-              type: integer
-            errors:
-              items:
-                properties:
-                  message:
-                    example: Not Found
-                    type: string
                 type: object
-              type: array
-            message:
-              example: Not Found
-              type: string
-          type: object
-      title: Not Found error
-      type: object
+                properties:
+                  status:
+                    type: string
+                    example: success
+                  message:
+                    type: string   
+
+                    example: Prompt   
+ received and processed
+        '400':
+          description: Bad Request - Missing prompt or Backend-ID.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Missing prompt in payload
+        '401':
+          description: Unauthorized - Missing or invalid JWT.
+          content:
+            application/json:
+              schema:
+                type: object
+                properties:
+                  status:
+                    type: string
+                    example: error
+                  message:
+                    type: string
+                    example: Missing Authorization header
+
+components:
   securitySchemes:
     bearerAuth:
       type: http
