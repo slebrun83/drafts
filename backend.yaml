@@ -74,9 +74,30 @@ components:
           description: The user prompt in plain text.
           type: string
       type: object
-
+    notfound:
+      properties:
+        errror:
+          description: rank number in list
+          properties:
+            code:
+              example: 404
+              type: integer
+            errors:
+              items:
+                properties:
+                  message:
+                    example: Not Found
+                    type: string
+                type: object
+              type: array
+            message:
+              example: Not Found
+              type: string
+          type: object
+      title: Not Found error
+      type: object
   securitySchemes:
-    ApiKeyAuth:
-      type: apiKey
-      name: x-api-key
-      in: header
+    bearerAuth:
+      type: http
+      scheme: bearer
+      bearerFormat: JWT
