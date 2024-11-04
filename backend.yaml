@@ -1,0 +1,82 @@
+openapi: 3.0.0
+info:
+  title: User Prompt Backends API
+  description: >-
+    This API allows you to send a user prompt in the request body and backend ID
+    in the request header. JWT authentication is required to access this API.
+  version: v1
+  contact:
+    name: John Doe
+    url: https://github.com/apigee/devrel
+paths:
+  /api/v1/userPrompts:
+    post:
+      description: >-
+        The request body should contain the user prompt in plain text. The
+        request header should contain the backend ID and JWT authentication
+        token.
+      operationId: createUserPrompt
+      requestBody:
+        content:
+          application/json:
+            schema:
+              $ref: '#/components/schemas/UserPrompt'
+        required: true
+      responses:
+        '200':
+          description: OK
+        '400':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notfound'
+          description: Bad Request
+        '401':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notfound'
+          description: Unauthorized
+        '403':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notfound'
+          description: Forbidden
+        '404':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notfound'
+          description: Not Found
+        '500':
+          content:
+            application/json:
+              schema:
+                $ref: '#/components/schemas/notfound'
+          description: Internal Server Error
+      summary: Creates a new user prompt.
+      tags:
+        - user-prompts
+components:
+  schemas:
+    JWT:
+      description: JWT authentication token
+      properties:
+        token:
+          description: The JWT authentication token
+          type: string
+      type: object
+    UserPrompt:
+      description: The user prompt in plain text.
+      properties:
+        prompt:
+          description: The user prompt in plain text.
+          type: string
+      type: object
+
+  securitySchemes:
+    ApiKeyAuth:
+      type: apiKey
+      name: x-api-key
+      in: header
